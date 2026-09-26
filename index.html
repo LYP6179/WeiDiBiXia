@@ -47,17 +47,17 @@ body{font-family:'Noto Serif SC','Songti SC','STSong','SimSun',serif;color:var(-
 </head>
 <body>
 <div class="scene" id="scene">
-  <img class="bg" src="assets/bg.png" alt="">
+  <img class="bg" src="bg.png" alt="">
   <div class="vignette"></div><div class="glow" id="glow"></div>
   <div class="stage">
     <div class="scroll-wrap" id="scroll" role="button" tabindex="0" aria-label="点击展开卷轴">
-      <img class="closed" src="assets/closed-scroll.png" alt="闭合卷轴">
-      <img class="opened" src="assets/opened-scroll.png" alt="展开卷轴">
+      <img class="closed" src="closed-scroll.png" alt="闭合卷轴">
+      <img class="opened" src="opened-scroll.png" alt="展开卷轴">
     </div>
     <div class="prompt" id="prompt">✦ 点击卷轴，展开呈奏 ✦</div>
   </div>
 
-  <img class="qie" id="qie" src="assets/qie-1.png" alt="臣妾">
+  <img class="qie" id="qie" src="qie-1.png" alt="臣妾">
   <div class="overlay" id="overlay">
     <div class="decision">
       <div class="seal">👑</div>
@@ -83,7 +83,7 @@ const decisionText=document.getElementById('decisionText');
 const qie=document.getElementById('qie');
 
 let opened=false, noCount=0;
-const qieStages=['assets/qie-1.png','assets/qie-2.png','assets/qie-3.png','assets/qie-4.png','assets/qie-5.png'];
+const qieStages=['qie-1.png','qie-2.png','qie-3.png','qie-4.png','qie-5.png'];
 
 function openScroll(){
   if(opened)return;
@@ -134,7 +134,7 @@ yes.addEventListener('click',()=>{
   status.textContent='臣妾谢恩。 👑';
   qie.classList.remove('show','pop');
   void qie.offsetWidth;
-  qie.src='assets/qie-thanks.png';
+  qie.src='qie-thanks.png';
   qie.classList.add('thanks','show','pop');
   yes.disabled=true;
   no.disabled=true;
