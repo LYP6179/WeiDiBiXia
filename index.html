@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>呈：薇帝陛下</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+:root{--ink:#5b2d20;--gold:#b88743;--paper:#f6ead0}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#261612}
+body{font-family:'Noto Serif SC','Songti SC','STSong','SimSun',serif;color:var(--ink)}
+.scene{position:fixed;inset:0;overflow:hidden;background:#2a1713}
+.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.96) brightness(.93);transform:scale(1.02)}
+.vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 48%,rgba(34,12,10,.26) 100%);pointer-events:none}
+.glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,224,172,.18),transparent 42%);opacity:0;transition:opacity 1.4s ease;pointer-events:none}
+.stage{position:absolute;inset:0;display:grid;place-items:center;padding:0}
+.scroll-wrap{position:relative;width:min(100vw,1500px);aspect-ratio:2048/682;display:grid;place-items:center;filter:drop-shadow(0 20px 34px rgba(35,12,8,.42));cursor:pointer;overflow:visible}
+.closed,.opened{position:absolute;max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain;transition:opacity 1.15s ease,transform 1.15s cubic-bezier(.2,.8,.2,1)}
+.closed{opacity:1;transform:scale(.62);transform-origin:center;pointer-events:auto}
+.opened{opacity:0;transform:scale(1.12);transform-origin:center;pointer-events:none}
+.scroll-wrap.open .closed{opacity:0;transform:scale(.58)}
+.scroll-wrap.open .opened{opacity:1;transform:scale(1.12);pointer-events:auto}
+
+.prompt{position:absolute;bottom:3.2%;left:50%;transform:translateX(-50%);font-size:clamp(16px,1.4vw,22px);letter-spacing:.12em;color:rgba(255,241,211,.9);opacity:0;transition:opacity .8s ease;white-space:nowrap;text-shadow:0 2px 10px rgba(40,10,6,.65);pointer-events:none;background:rgba(77,27,20,.72);border:1px solid rgba(255,222,164,.75);border-radius:999px;padding:10px 22px;box-shadow:0 8px 24px rgba(45,14,9,.3);animation:promptPulse 1.8s ease-in-out infinite}
+.prompt.show{opacity:1}@keyframes promptPulse{0%,100%{transform:translateX(-50%) scale(1);box-shadow:0 8px 24px rgba(45,14,9,.3)}50%{transform:translateX(-50%) scale(1.04);box-shadow:0 10px 30px rgba(45,14,9,.46)}}
+
+.overlay{position:absolute;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .7s ease;background:rgba(31,11,8,.12)}
+.decision{width:min(560px,86vw);padding:30px 28px 26px;border:1px solid rgba(214,173,105,.6);border-radius:22px;background:rgba(251,239,215,.96);box-shadow:0 22px 60px rgba(34,11,7,.4);text-align:center;transform:translateY(12px) scale(.96);transition:transform .7s ease}
+.overlay.show{opacity:1;pointer-events:auto}.overlay.show .decision{transform:translateY(0) scale(1)}
+.decision h2{margin:0 0 9px;font-size:25px;font-weight:600}.decision p{margin:0 0 20px;color:#7b4a37}.buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.btn{font:inherit;border-radius:999px;padding:11px 24px;cursor:pointer;border:1px solid #bd8c51;background:#fff6e5;color:#6a3527;transition:transform .28s ease,opacity .28s ease,box-shadow .28s ease,font-size .28s ease}.btn.primary{background:#9e3025;color:#fff8ec;border-color:#7e241b}.btn.locked{opacity:.38;cursor:not-allowed;transform:scale(.72)!important}.status{min-height:1.5em;margin-top:16px;font-size:14px;color:#8d2c20}.qie{position:absolute;left:50%;bottom:2vh;transform:translate(-50%,18px) scale(.94);max-width:min(360px,34vw);max-height:38vh;object-fit:contain;opacity:0;pointer-events:none;filter:drop-shadow(0 14px 22px rgba(60,20,12,.22));transition:opacity .6s ease,transform .7s cubic-bezier(.2,.8,.2,1)}.qie.show{opacity:1;transform:translate(-50%,0) scale(1)}.qie.thanks{max-width:min(460px,42vw);max-height:48vh;bottom:1vh}.qie.pop{animation:qiePop .7s ease}@keyframes qiePop{0%{transform:translate(-50%,18px) scale(.78);opacity:0}60%{transform:translate(-50%,-4px) scale(1.04);opacity:1}100%{transform:translate(-50%,0) scale(1)}}.seal{font-size:30px;margin-bottom:5px}
+
+/* interaction: NO shrinks, YES grows */
+#no{--no-scale:1;transform:scale(var(--no-scale))}
+#yes{--yes-scale:1;transform:scale(var(--yes-scale));box-shadow:0 8px 22px rgba(126,36,27,.12)}
+
+@media(max-width:700px){
+  .scroll-wrap{width:100vw}
+  .closed{transform:scale(.58)}
+  .opened{transform:scale(1.02)}
+  .scroll-wrap.open .closed{transform:scale(.55)}
+  .scroll-wrap.open .opened{transform:scale(1.02)}
+  .prompt{font-size:10px}
+  .decision{padding:24px 18px}.decision h2{font-size:21px}
+}
+</style>
+</head>
+<body>
+<div class="scene" id="scene">
+  <img class="bg" src="assets/bg.png" alt="">
+  <div class="vignette"></div><div class="glow" id="glow"></div>
+  <div class="stage">
+    <div class="scroll-wrap" id="scroll" role="button" tabindex="0" aria-label="点击展开卷轴">
+      <img class="closed" src="assets/closed-scroll.png" alt="闭合卷轴">
+      <img class="opened" src="assets/opened-scroll.png" alt="展开卷轴">
+    </div>
+    <div class="prompt" id="prompt">✦ 点击卷轴，展开呈奏 ✦</div>
+  </div>
+
+  <img class="qie" id="qie" src="assets/qie-1.png" alt="臣妾">
+  <div class="overlay" id="overlay">
+    <div class="decision">
+      <div class="seal">👑</div>
+      <h2 id="decisionTitle">2027，还收留臣妾吗？</h2>
+      <p id="decisionText">请陛下明示。</p>
+      <div class="buttons">
+        <button class="btn primary" id="yes">收留臣妾 👑</button>
+        <button class="btn" id="no">不收留</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+</div>
+<script>
+const scroll=document.getElementById('scroll');
+const glow=document.getElementById('glow');
+const prompt=document.getElementById('prompt');
+const overlay=document.getElementById('overlay');
+const no=document.getElementById('no');
+const yes=document.getElementById('yes');
+const status=document.getElementById('status');
+const decisionText=document.getElementById('decisionText');
+const qie=document.getElementById('qie');
+
+let opened=false, noCount=0;
+const qieStages=['assets/qie-1.png','assets/qie-2.png','assets/qie-3.png','assets/qie-4.png','assets/qie-5.png'];
+
+function openScroll(){
+  if(opened)return;
+  opened=true;
+  prompt.classList.remove('show');
+  glow.style.opacity='.85';
+  scroll.classList.add('open');
+  setTimeout(()=>glow.style.opacity='.22',1400);
+  // The opened-scroll image already contains the final letter artwork.
+  // Let the user read it for 8 seconds before showing the decision.
+  setTimeout(()=>overlay.classList.add('show'),8000);
+}
+
+// No automatic opening: the user must click/tap the closed scroll.
+setTimeout(()=>prompt.classList.add('show'),650);
+scroll.addEventListener('click',openScroll);
+scroll.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openScroll();}});
+
+no.addEventListener('click',()=>{
+  noCount++;
+  const lines=[
+    '……陛下确定？',
+    '臣妾斗胆，再确认一次。',
+    '陛下，这是最终决定吗？',
+    '臣妾请求陛下三思。',
+    '驳回。'
+  ];
+  status.textContent=lines[Math.min(noCount-1,lines.length-1)];
+  qie.src=qieStages[Math.min(noCount-1,qieStages.length-1)];
+  qie.classList.remove('show','pop');
+  void qie.offsetWidth;
+  qie.classList.add('show','pop');
+  // Each NO click shrinks NO and enlarges YES.
+  const noScale=Math.max(.18,1-noCount*.15);
+  const yesScale=Math.min(1.55,1+noCount*.10);
+  no.style.setProperty('--no-scale',noScale);
+  yes.style.setProperty('--yes-scale',yesScale);
+  if(noCount>=5){
+    no.disabled=true;
+    no.classList.add('locked');
+    no.textContent='🔒 不收留';
+    decisionText.textContent='「不收留」选项已被臣妾以程序问题暂时扣押。';
+  }
+});
+
+yes.addEventListener('click',()=>{
+  decisionText.textContent='圣旨已下。2027 年度——续约成功。';
+  status.textContent='臣妾谢恩。 👑';
+  qie.classList.remove('show','pop');
+  void qie.offsetWidth;
+  qie.src='assets/qie-thanks.png';
+  qie.classList.add('thanks','show','pop');
+  yes.disabled=true;
+  no.disabled=true;
+  no.classList.add('locked');
+  yes.textContent='已收留 ✓';
+});
+</script>
+</body>
+</html>
