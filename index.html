@@ -66,7 +66,18 @@ body{font-family:'Noto Serif SC','Songti SC','STSong','SimSun',serif;color:var(-
   </div>
 
   <img class="qie" id="qie" src="qie-1.png" alt="臣妾">
-  <div class="overlay" id="overlay">
+  <div class="overlay" id="continueOverlay">
+    <div class="decision">
+      <div class="seal">📜</div>
+      <h2>陛下，请继续。</h2>
+      <p>臣妾还有最后一句话。</p>
+      <div class="buttons">
+        <button class="btn primary" id="continueBtn">继续 ›</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="decisionOverlay">
     <div class="decision">
       <div class="seal">👑</div>
       <h2 id="decisionTitle">2027，还收留臣妾吗？</h2>
@@ -84,7 +95,9 @@ body{font-family:'Noto Serif SC','Songti SC','STSong','SimSun',serif;color:var(-
 const scroll=document.getElementById('scroll');
 const glow=document.getElementById('glow');
 const prompt=document.getElementById('prompt');
-const overlay=document.getElementById('overlay');
+const continueOverlay=document.getElementById('continueOverlay');
+const decisionOverlay=document.getElementById('decisionOverlay');
+const continueBtn=document.getElementById('continueBtn');
 const no=document.getElementById('no');
 const yes=document.getElementById('yes');
 const status=document.getElementById('status');
@@ -137,7 +150,7 @@ function openScroll(){
   glow.style.opacity='.85';
   scroll.classList.add('open');
   setTimeout(()=>glow.style.opacity='.22',1400);
-  setTimeout(()=>overlay.classList.add('show'),20000);
+  setTimeout(()=>continueOverlay.classList.add('show'),20000);
 }
 
 setTimeout(()=>prompt.classList.add('show'),650);
@@ -147,6 +160,11 @@ scroll.addEventListener('keydown',e=>{
     e.preventDefault();
     openScroll();
   }
+});
+
+continueBtn.addEventListener('click',()=>{
+  continueOverlay.classList.remove('show');
+  setTimeout(()=>decisionOverlay.classList.add('show'),350);
 });
 
 no.addEventListener('click',()=>{
