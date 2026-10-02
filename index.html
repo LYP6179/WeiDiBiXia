@@ -108,6 +108,12 @@ function startMusic(){
   });
 }
 
+// Try to start music immediately when the page opens.
+// Some browsers may block autoplay with sound; in that case,
+// the first tap/click anywhere on the page will start it.
+startMusic();
+document.addEventListener('pointerdown',startMusic,{once:true});
+
 function toggleMusic(){
   if(bgm.paused){
     bgm.play().then(()=>{
@@ -131,7 +137,7 @@ function openScroll(){
   glow.style.opacity='.85';
   scroll.classList.add('open');
   setTimeout(()=>glow.style.opacity='.22',1400);
-  setTimeout(()=>overlay.classList.add('show'),8000);
+  setTimeout(()=>overlay.classList.add('show'),20000);
 }
 
 setTimeout(()=>prompt.classList.add('show'),650);
